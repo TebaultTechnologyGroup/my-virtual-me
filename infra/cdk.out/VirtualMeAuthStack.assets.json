@@ -1,0 +1,20 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "361fdd16944364af25285d871d2640e497bd6a8af89de4a690e3d4746e32af2c": {
+      "displayName": "VirtualMeAuthStack Template",
+      "source": {
+        "path": "VirtualMeAuthStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-23501b1d": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "361fdd16944364af25285d871d2640e497bd6a8af89de4a690e3d4746e32af2c.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

@@ -1,0 +1,16 @@
+My Virtual Me
+DB Password: SW6XMHMG2pjRz5Hj
+
+DB Password: tZ6NJdiaI2Ml7iSH
+
+
+
+cdk bootstrap aws://615740708866/us-east-2 --profile virtual-me
+
+
+
+Outputs:
+VirtualMeAuthStack.ClientId = 48mokgmtislmp1em677fib2dl1
+VirtualMeAuthStack.UserPoolId = us-east-2_2ZmK3z3Lu
+Stack ARN:
+arn:aws:cloudformation:us-east-2:615740708866:stack/VirtualMeAuthStack/cb0474c0-3f4b-11f1-8169-06ebf674468d

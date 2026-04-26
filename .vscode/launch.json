@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Vite (frontend)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Local:.*(http?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      },
+      "env": {
+        "BROWSER": "none"
+      }
+    }
+  ]
+}
