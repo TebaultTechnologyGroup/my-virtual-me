@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import {
-  UserCircle,
-  BrainCircuit,
+  BriefcaseBusiness,
+  SquareStack,
   FileStack,
-  MicVocal,
-  LogOut,
   ArrowRight,
+  FolderPen,
 } from "lucide-react";
 import {
   Card,
@@ -15,77 +14,71 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "./../lib/supabase-client";
 
-const dashboardOptions = [
+const setupOptions = [
   {
-    title: "Profile",
+    title: "General Information",
     description:
-      "Manage your personal information, contact details, and location for your resume header.",
-    icon: UserCircle,
-    path: "/app/setup",
+      "Manage your general information, contact details, and location for your resume header.",
+    icon: FolderPen,
+    path: "/app/setup/personal",
     color: "text-slate-600",
     bg: "bg-slate-50",
   },
   {
-    title: "Train Virtual Me",
+    title: "Professional Summary",
     description:
-      "The core of your AI. Update narrative pillars, job history, and STAR stories to sharpen your agent.",
-    icon: BrainCircuit,
-    path: "/app/setup",
+      "Manage your professional summary for one or more target job types. This will be used to create your signature professional stories and tailor your resume and interview prep.",
+    icon: BriefcaseBusiness,
+    path: "/app/setup/summary",
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
   {
-    title: "Resume Builder",
+    title: "Job History",
     description:
-      "Generate tailored resumes based on your trained personas and specific job descriptions.",
-    icon: FileStack,
-    path: "/app/resume-builder",
+      "Manage your job history, including roles, companies, dates, and descriptions. This will be used to create your signature professional stories and tailor your resume and interview prep.",
+    icon: SquareStack,
+    path: "/app/setup/job-history",
     color: "text-emerald-600",
     bg: "bg-emerald-50",
   },
   {
-    title: "Interview Prep",
+    title: "Credentials",
     description:
-      "Practice with your AI coach. Get feedback based on your signature professional stories.",
-    icon: MicVocal,
-    path: "/app/interview-prep",
+      "Manage your educational background, certifications, and licenses.",
+    icon: FileStack,
+    path: "/app/setup/credentials",
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+  },
+  {
+    title: "Skills",
+    description: "Manage your skills and expertise across different domains.",
+    icon: FileStack,
+    path: "/app/setup/skills",
     color: "text-purple-600",
     bg: "bg-purple-50",
   },
 ];
 
-export default function DashboardPage() {
+export default function SetupPage() {
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
-  };
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <header className="flex justify-between items-start mb-10">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Executive Control Center
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your professional identity and AI training.
+            Manage your settings, update your profile, and configure your
+            Virtual Me to get the most out of our AI tools.
           </p>
         </div>
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="text-destructive hover:bg-destructive/10"
-        >
-          <LogOut className="w-4 h-4 mr-2" /> Log Off
-        </Button>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {dashboardOptions.map((option) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {setupOptions.map((option) => (
           <Card
             key={option.title}
             className="hover:shadow-lg transition-all border-2 hover:border-blue-200 group"

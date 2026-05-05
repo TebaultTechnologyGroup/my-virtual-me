@@ -2,7 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AppContext";
 import { Loader2 } from "lucide-react";
 
-export function ProtectedRoutes() {
+export function RedirectIfAuthenticated() {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -14,9 +14,9 @@ export function ProtectedRoutes() {
     );
   }
 
-  // Redirect to login, but save the current location so we can send them back
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  // Redirect to app if the user is authenticated.
+  if (user) {
+    return <Navigate to="/app" state={{ from: location }} replace />;
   }
 
   return <Outlet />;

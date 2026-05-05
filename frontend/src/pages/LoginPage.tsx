@@ -69,6 +69,7 @@ const LoginPage: React.FC = () => {
         navigate("/verify", { state: { email: formData.email } });
       }
     } catch (error: any) {
+      console.error("Login error:", error);
       toast.error(error.message || "Login failed");
     } finally {
       setIsLoading(false);

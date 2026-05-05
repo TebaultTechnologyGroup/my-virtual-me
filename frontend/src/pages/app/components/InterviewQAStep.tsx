@@ -9,13 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Plus,
-  Trash2,
-  MessageSquare,
-  Lightbulb,
-  CheckCircle2,
-} from "lucide-react";
+import { Plus, Trash2, MessageSquare, Lightbulb } from "lucide-react";
 
 function InterviewQAStep({ form }: { form: any }) {
   const { fields, append, remove } = useFieldArray({
