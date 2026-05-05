@@ -286,7 +286,7 @@ export function CredentialsPage() {
     );
 
   return (
-    <div className="space-y-8">
+    <div className="p-8 max-w-7xl mx-auto">
       {/* SECTION: EDUCATION */}
       <Card className="border-2 border-slate-100 shadow-sm">
         <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">

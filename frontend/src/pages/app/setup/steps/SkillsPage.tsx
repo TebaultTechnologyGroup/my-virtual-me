@@ -126,108 +126,110 @@ export default function SkillsPage() {
     );
 
   return (
-    <Card className="border-2 shadow-sm">
-      <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Wrench className="w-5 h-5 text-blue-600" />{" "}
-            <Link to="/app/setup">Setup</Link> -&gt; Skills Inventory
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Add skills to ground your AI agent in your technical expertise.
-          </p>
-        </div>
-        <Button
-          onClick={handleSave}
-          disabled={isSubmitting}
-          className="bg-emerald-600 hover:bg-emerald-700"
-        >
-          {isSubmitting ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4 mr-2" />
-          )}
-          Save Skills
-        </Button>
-      </CardHeader>
+    <div className="p-8 max-w-7xl mx-auto">
+      <Card className="border-2 shadow-sm">
+        <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Wrench className="w-5 h-5 text-blue-600" />{" "}
+              <Link to="/app/setup">Setup</Link> -&gt; Skills Inventory
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Add skills to ground your AI agent in your technical expertise.
+            </p>
+          </div>
+          <Button
+            onClick={handleSave}
+            disabled={isSubmitting}
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            {isSubmitting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            Save Skills
+          </Button>
+        </CardHeader>
 
-      <CardContent className="pt-6 space-y-4">
-        {/* The Pills Area */}
-        <div className="flex flex-wrap gap-2 min-h-12 p-3 rounded-lg border border-dashed bg-slate-50/30">
-          {selectedSkills.length === 0 && (
-            <span className="text-sm text-slate-400 italic">
-              No skills selected...
-            </span>
-          )}
-          {selectedSkills.map((skill) => (
-            <Badge
-              key={skill}
-              variant="secondary"
-              className="pl-3 pr-1 py-1 bg-white border-slate-200 text-slate-700 gap-1 shadow-sm"
-            >
-              {skill}
-              <button
-                onClick={() => handleUnselect(skill)}
-                className="hover:bg-slate-100 rounded-full p-0.5 transition-colors"
+        <CardContent className="pt-6 space-y-4">
+          {/* The Pills Area */}
+          <div className="flex flex-wrap gap-2 min-h-12 p-3 rounded-lg border border-dashed bg-slate-50/30">
+            {selectedSkills.length === 0 && (
+              <span className="text-sm text-slate-400 italic">
+                No skills selected...
+              </span>
+            )}
+            {selectedSkills.map((skill) => (
+              <Badge
+                key={skill}
+                variant="secondary"
+                className="pl-3 pr-1 py-1 bg-white border-slate-200 text-slate-700 gap-1 shadow-sm"
               >
-                <X className="h-3 w-3 text-slate-400 hover:text-red-500" />
-              </button>
-            </Badge>
-          ))}
-        </div>
-
-        {/* The Search & Add Trigger */}
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              className="w-full justify-between bg-white text-muted-foreground"
-            >
-              {inputValue || "Search database or type new skill..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-100 p-0" align="start">
-            <Command>
-              <CommandInput
-                placeholder="Search skills..."
-                value={inputValue}
-                onValueChange={setInputValue}
-              />
-              <CommandList>
-                <CommandEmpty className="p-2">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-blue-600"
-                    onClick={() => handleSelect(inputValue)}
-                  >
-                    <Plus className="w-4 h-4 mr-2" /> Add "{inputValue}" as new
-                    skill
-                  </Button>
-                </CommandEmpty>
-                <CommandGroup
-                  heading="Available Skills"
-                  className="max-h-64 overflow-auto"
+                {skill}
+                <button
+                  onClick={() => handleUnselect(skill)}
+                  className="hover:bg-slate-100 rounded-full p-0.5 transition-colors"
                 >
-                  {allSkills
-                    .filter((s) => !selectedSkills.includes(s))
-                    .map((skill) => (
-                      <CommandItem
-                        key={skill}
-                        onSelect={() => handleSelect(skill)}
-                      >
-                        <Check className="mr-2 h-4 w-4 opacity-0" />
-                        {skill}
-                      </CommandItem>
-                    ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </CardContent>
-    </Card>
+                  <X className="h-3 w-3 text-slate-400 hover:text-red-500" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+
+          {/* The Search & Add Trigger */}
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                className="w-full justify-between bg-white text-muted-foreground"
+              >
+                {inputValue || "Search database or type new skill..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-100 p-0" align="start">
+              <Command>
+                <CommandInput
+                  placeholder="Search skills..."
+                  value={inputValue}
+                  onValueChange={setInputValue}
+                />
+                <CommandList>
+                  <CommandEmpty className="p-2">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-blue-600"
+                      onClick={() => handleSelect(inputValue)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" /> Add "{inputValue}" as
+                      new skill
+                    </Button>
+                  </CommandEmpty>
+                  <CommandGroup
+                    heading="Available Skills"
+                    className="max-h-64 overflow-auto"
+                  >
+                    {allSkills
+                      .filter((s) => !selectedSkills.includes(s))
+                      .map((skill) => (
+                        <CommandItem
+                          key={skill}
+                          onSelect={() => handleSelect(skill)}
+                        >
+                          <Check className="mr-2 h-4 w-4 opacity-0" />
+                          {skill}
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

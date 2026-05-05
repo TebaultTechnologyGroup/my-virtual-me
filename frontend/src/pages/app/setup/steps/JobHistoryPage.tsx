@@ -216,249 +216,256 @@ export default function JobHistoryPage() {
       </div>
     );
   return (
-    <form
-      id="job-history-form"
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-6"
-    >
-      <Card className="border-2">
-        <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-blue-600" />{" "}
-              <Link to="/app/setup">Setup</Link> -&gt; Job History
-            </CardTitle>
-          </div>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-emerald-600 hover:bg-emerald-700"
-          >
-            {isSubmitting ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4 mr-2" />
-            )}
-            Save History
-          </Button>
-        </CardHeader>
+    <div className="p-8 max-w-7xl mx-auto">
+      <form
+        id="job-history-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
+        <Card className="border-2">
+          <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-blue-600" />{" "}
+                <Link to="/app/setup">Setup</Link> -&gt; Job History
+              </CardTitle>
+            </div>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              Save History
+            </Button>
+          </CardHeader>
 
-        <CardContent className="p-6">
-          <Accordion type="single" collapsible className="space-y-4 mb-6">
-            {fields.map((field, index) => (
-              <AccordionItem
-                key={field.id}
-                value={field.id}
-                className="border rounded-xl px-4"
-              >
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="p-2 bg-blue-50 rounded-lg">
-                      <Briefcase className="w-5 h-5 text-blue-600" />
+          <CardContent className="p-6">
+            <Accordion type="single" collapsible className="space-y-4 mb-6">
+              {fields.map((field, index) => (
+                <AccordionItem
+                  key={field.id}
+                  value={field.id}
+                  className="border rounded-xl px-4"
+                >
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-4 text-left">
+                      <div className="p-2 bg-blue-50 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-bold">
+                          {form.watch(`jobs.${index}.title`) || "Position"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {form.watch(`jobs.${index}.company`) || "Company"}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold">
-                        {form.watch(`jobs.${index}.title`) || "Position"}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {form.watch(`jobs.${index}.company`) || "Company"}
-                      </p>
-                    </div>
-                  </div>
-                </AccordionTrigger>
+                  </AccordionTrigger>
 
-                <AccordionContent className="space-y-6 pt-4 pb-4">
-                  {/* Company & Location Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Controller
-                      name={`jobs.${index}.company`}
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field>
-                          <FieldLabel>Company Name</FieldLabel>
-                          <FieldGroup>
-                            <Input {...field} placeholder="Motorola" />
-                          </FieldGroup>
-                          {fieldState.error && (
-                            <FieldError>{fieldState.error.message}</FieldError>
-                          )}
-                        </Field>
-                      )}
-                    />
-                    <Controller
-                      name={`jobs.${index}.location`}
-                      control={form.control}
-                      render={({ field, fieldState }) => (
-                        <Field>
-                          <FieldLabel>Location</FieldLabel>
-                          <FieldGroup>
-                            <Input {...field} placeholder="Atlanta, GA" />
-                          </FieldGroup>
-                          {fieldState.error && (
-                            <FieldError>{fieldState.error.message}</FieldError>
-                          )}
-                        </Field>
-                      )}
-                    />
-                  </div>
-
-                  <Controller
-                    name={`jobs.${index}.title`}
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field>
-                        <FieldLabel>Job Title</FieldLabel>
-                        <FieldGroup>
-                          <Input {...field} placeholder="VP of Operations" />
-                        </FieldGroup>
-                        {fieldState.error && (
-                          <FieldError>{fieldState.error.message}</FieldError>
-                        )}
-                      </Field>
-                    )}
-                  />
-
-                  {/* Dates Section */}
-                  <div className="p-4 bg-slate-50 rounded-lg border space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id={`curr-${index}`}
-                        checked={form.watch(`jobs.${index}.isCurrent`)}
-                        onCheckedChange={(val) =>
-                          form.setValue(`jobs.${index}.isCurrent`, !!val)
-                        }
-                      />
-                      <Label htmlFor={`curr-${index}`}>
-                        I currently work here
-                      </Label>
-                    </div>
-
+                  <AccordionContent className="space-y-6 pt-4 pb-4">
+                    {/* Company & Location Row */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Field>
-                        <FieldLabel>Start Date</FieldLabel>
-                        <div className="flex gap-2">
-                          <DateSelect
-                            form={form}
-                            name={`jobs.${index}.startMonth`}
-                            items={MONTHS}
-                            placeholder="Month"
-                          />
-                          <DateSelect
-                            form={form}
-                            name={`jobs.${index}.startYear`}
-                            items={YEARS}
-                            placeholder="Year"
-                          />
-                        </div>
-                      </Field>
+                      <Controller
+                        name={`jobs.${index}.company`}
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel>Company Name</FieldLabel>
+                            <FieldGroup>
+                              <Input {...field} placeholder="Motorola" />
+                            </FieldGroup>
+                            {fieldState.error && (
+                              <FieldError>
+                                {fieldState.error.message}
+                              </FieldError>
+                            )}
+                          </Field>
+                        )}
+                      />
+                      <Controller
+                        name={`jobs.${index}.location`}
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                          <Field>
+                            <FieldLabel>Location</FieldLabel>
+                            <FieldGroup>
+                              <Input {...field} placeholder="Atlanta, GA" />
+                            </FieldGroup>
+                            {fieldState.error && (
+                              <FieldError>
+                                {fieldState.error.message}
+                              </FieldError>
+                            )}
+                          </Field>
+                        )}
+                      />
+                    </div>
 
-                      {!form.watch(`jobs.${index}.isCurrent`) && (
+                    <Controller
+                      name={`jobs.${index}.title`}
+                      control={form.control}
+                      render={({ field, fieldState }) => (
                         <Field>
-                          <FieldLabel>End Date</FieldLabel>
+                          <FieldLabel>Job Title</FieldLabel>
+                          <FieldGroup>
+                            <Input {...field} placeholder="VP of Operations" />
+                          </FieldGroup>
+                          {fieldState.error && (
+                            <FieldError>{fieldState.error.message}</FieldError>
+                          )}
+                        </Field>
+                      )}
+                    />
+
+                    {/* Dates Section */}
+                    <div className="p-4 bg-slate-50 rounded-lg border space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id={`curr-${index}`}
+                          checked={form.watch(`jobs.${index}.isCurrent`)}
+                          onCheckedChange={(val) =>
+                            form.setValue(`jobs.${index}.isCurrent`, !!val)
+                          }
+                        />
+                        <Label htmlFor={`curr-${index}`}>
+                          I currently work here
+                        </Label>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Field>
+                          <FieldLabel>Start Date</FieldLabel>
                           <div className="flex gap-2">
                             <DateSelect
                               form={form}
-                              name={`jobs.${index}.endMonth`}
+                              name={`jobs.${index}.startMonth`}
                               items={MONTHS}
                               placeholder="Month"
                             />
                             <DateSelect
                               form={form}
-                              name={`jobs.${index}.endYear`}
+                              name={`jobs.${index}.startYear`}
                               items={YEARS}
                               placeholder="Year"
                             />
                           </div>
                         </Field>
+
+                        {!form.watch(`jobs.${index}.isCurrent`) && (
+                          <Field>
+                            <FieldLabel>End Date</FieldLabel>
+                            <div className="flex gap-2">
+                              <DateSelect
+                                form={form}
+                                name={`jobs.${index}.endMonth`}
+                                items={MONTHS}
+                                placeholder="Month"
+                              />
+                              <DateSelect
+                                form={form}
+                                name={`jobs.${index}.endYear`}
+                                items={YEARS}
+                                placeholder="Year"
+                              />
+                            </div>
+                          </Field>
+                        )}
+                      </div>
+                    </div>
+                    <Controller
+                      name={`jobs.${index}.description`}
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel>Description</FieldLabel>
+                          <FieldGroup>
+                            <Textarea
+                              className="max-h-40 bg-white"
+                              {...field}
+                              placeholder="Core mission and scope. Keep this short. One or two sentences is sufficient. Focus on high-level overview of role, not day-to-day tasks."
+                            />
+                            {fieldState.invalid && (
+                              <FieldError errors={[fieldState.error]} />
+                            )}
+                          </FieldGroup>
+                        </Field>
                       )}
-                    </div>
-                  </div>
-                  <Controller
-                    name={`jobs.${index}.description`}
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field>
-                        <FieldLabel>Description</FieldLabel>
-                        <FieldGroup>
-                          <Textarea
-                            className="max-h-40 bg-white"
-                            {...field}
-                            placeholder="Core mission and scope. Keep this short. One or two sentences is sufficient. Focus on high-level overview of role, not day-to-day tasks."
-                          />
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </FieldGroup>
-                      </Field>
-                    )}
-                  />
-
-                  <div className="space-y-4">
-                    <Label className="text-blue-600 font-bold flex items-center gap-2">
-                      <Target className="w-4 h-4" /> Accomplishments
-                    </Label>
-                    <div className="text-sm text-muted-foreground">
-                      Focus on high-level Accomplishments and impact rather than
-                      day-to-day tasks. What you achieved is more important than
-                      what you did. 3-5 bullet points per position is ideal.
-                    </div>
-                    <DynamicList
-                      fieldName={`jobs.${index}.accomplishments`}
-                      form={form}
-                      placeholder="Scaled revenue..."
                     />
-                  </div>
 
-                  <div className="space-y-4">
-                    <Label className="text-blue-600 font-bold flex items-center gap-2">
-                      <Trophy className="w-4 h-4" /> Awards
-                    </Label>
-                    <DynamicList
-                      fieldName={`jobs.${index}.awards`}
-                      form={form}
-                      placeholder="Excellence award..."
-                    />
-                  </div>
+                    <div className="space-y-4">
+                      <Label className="text-blue-600 font-bold flex items-center gap-2">
+                        <Target className="w-4 h-4" /> Accomplishments
+                      </Label>
+                      <div className="text-sm text-muted-foreground">
+                        Focus on high-level Accomplishments and impact rather
+                        than day-to-day tasks. What you achieved is more
+                        important than what you did. 3-5 bullet points per
+                        position is ideal.
+                      </div>
+                      <DynamicList
+                        fieldName={`jobs.${index}.accomplishments`}
+                        form={form}
+                        placeholder="Scaled revenue..."
+                      />
+                    </div>
 
-                  <div className="flex justify-end pt-4 border-t">
-                    <Button
-                      variant="ghost"
-                      className="text-red-600"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" /> Remove Position
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                    <div className="space-y-4">
+                      <Label className="text-blue-600 font-bold flex items-center gap-2">
+                        <Trophy className="w-4 h-4" /> Awards
+                      </Label>
+                      <DynamicList
+                        fieldName={`jobs.${index}.awards`}
+                        form={form}
+                        placeholder="Excellence award..."
+                      />
+                    </div>
 
-          <Button
-            variant="outline"
-            className="w-full border-dashed py-8"
-            onClick={() =>
-              append({
-                company: "",
-                location: "",
-                title: "",
-                description: "",
-                startMonth: "",
-                startYear: "",
-                isCurrent: false,
-                accomplishments: [""],
-                awards: [""],
-              })
-            }
-          >
-            <Plus className="mr-2" /> Add Job Position
-          </Button>
-        </CardContent>
-        <CardFooter className="bg-slate-50/50">
-          <ErrorSummary />
-        </CardFooter>
-      </Card>
-    </form>
+                    <div className="flex justify-end pt-4 border-t">
+                      <Button
+                        variant="ghost"
+                        className="text-red-600"
+                        onClick={() => remove(index)}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Remove Position
+                      </Button>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+
+            <Button
+              variant="outline"
+              className="w-full border-dashed py-8"
+              onClick={() =>
+                append({
+                  company: "",
+                  location: "",
+                  title: "",
+                  description: "",
+                  startMonth: "",
+                  startYear: "",
+                  isCurrent: false,
+                  accomplishments: [""],
+                  awards: [""],
+                })
+              }
+            >
+              <Plus className="mr-2" /> Add Job Position
+            </Button>
+          </CardContent>
+          <CardFooter className="bg-slate-50/50">
+            <ErrorSummary />
+          </CardFooter>
+        </Card>
+      </form>
+    </div>
   );
 }
 
