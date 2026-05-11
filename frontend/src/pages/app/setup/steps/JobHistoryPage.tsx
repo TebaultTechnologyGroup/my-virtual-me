@@ -10,12 +10,12 @@ import {
   Trash2,
   Loader2,
   Save,
+  SquareStack,
   Briefcase,
   Target,
   Trophy,
-  Link,
 } from "lucide-react";
-
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -224,12 +224,11 @@ export default function JobHistoryPage() {
       >
         <Card className="border-2">
           <CardHeader className="bg-slate-50/50 flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-blue-600" />{" "}
-                <Link to="/app/setup">Setup</Link> -&gt; Job History
-              </CardTitle>
-            </div>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <SquareStack className="w-5 h-5 text-blue-600" />
+              <Link to="/app/setup">Setup</Link> -&gt; Job History
+            </CardTitle>
+
             <Button
               type="submit"
               disabled={isSubmitting}

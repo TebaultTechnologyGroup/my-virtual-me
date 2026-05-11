@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
---2. PROFESSIONAL SUMMARRIES
+-- PROFESSIONAL SUMMARRIES
 CREATE TABLE IF NOT EXISTS professional_summaries (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS professional_summaries (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. JOB HISTORY
+-- JOB HISTORY
 CREATE TABLE IF NOT EXISTS job_history (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -40,20 +40,11 @@ CREATE TABLE IF NOT EXISTS job_history (
   is_current BOOLEAN DEFAULT FALSE,
   accomplishments TEXT[] DEFAULT '{}',
   awards TEXT[] DEFAULT '{}',
+  context_type TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. JOB DETAILS (Accomplishments and Awards)
-CREATE TABLE IF NOT EXISTS job_details (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  job_id UUID REFERENCES job_history(id) ON DELETE CASCADE,
-  user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  type TEXT CHECK (type IN ('accomplishment', 'award')),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 5. USER SKILLS (Structured Inventory)
+-- USER SKILLS (Structured Inventory)
 CREATE TABLE IF NOT EXISTS user_skills (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -61,7 +52,7 @@ CREATE TABLE IF NOT EXISTS user_skills (
    UNIQUE(user_id, skill)
 );
 
--- 5a. SKILLS (Skills Inventory)
+-- SKILLS (Skills Inventory)
 CREATE TABLE IF NOT EXISTS skills (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   skill TEXT NOT NULL, -- e.g., 'rag'
@@ -69,7 +60,7 @@ CREATE TABLE IF NOT EXISTS skills (
 );
 
 
--- 6. EDUCATION
+-- EDUCATION
 CREATE TABLE IF NOT EXISTS education (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -85,7 +76,7 @@ CREATE TABLE IF NOT EXISTS education (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. CERTIFICATIONS
+-- CERTIFICATIONS
 CREATE TABLE IF NOT EXISTS certifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -96,7 +87,7 @@ CREATE TABLE IF NOT EXISTS certifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. INTERVIEW Q&A (STAR Method)
+-- INTERVIEW Q&A (STAR Method)
 CREATE TABLE IF NOT EXISTS interview_qa (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
@@ -105,6 +96,17 @@ CREATE TABLE IF NOT EXISTS interview_qa (
   task TEXT,
   action TEXT,
   result TEXT,
+  context_tag TEXT DEFAULT 'universal', -- 'universal', 'technical', 'leadership'
+  target_job_id UUID, -- Links to a specific Job Description prep session
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Training Sessions (for both baseline and job prep modes)
+CREATE TABLE IF NOT EXISTS training_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT REFERENCES profiles(id),
+  mode TEXT, -- 'baseline' or 'job_prep'
+  transcript JSONB, -- The full back-and-forth
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -121,6 +123,7 @@ ALTER TABLE education ENABLE ROW LEVEL SECURITY;
 ALTER TABLE certifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE interview_qa ENABLE ROW LEVEL SECURITY;
 ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
+ALTER TABLE training_sessions ENABLE ROW LEVEL SECURITY;
 
 ---
 -- CREATE POLICIES (Using Cognito 'sub' via auth.jwt())
@@ -174,6 +177,11 @@ FOR ALL
 TO authenticated 
 USING (auth.jwt() IS NOT NULL) 
 WITH CHECK (auth.jwt() IS NOT NULL);
+
+-- CREATE POLICY for training_sessions
+CREATE POLICY "Users can only access their own training sessions"
+ON training_sessions FOR ALL
+USING (auth.jwt() ->> 'sub' = user_id);
 
 -- seed skills table with common skills (this can be expanded over time)
 INSERT INTO skills (skill) VALUES

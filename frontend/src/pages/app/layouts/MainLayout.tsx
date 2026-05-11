@@ -49,7 +49,7 @@ export default function MainLayout() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link
-                    to="/app/agent"
+                    to="/app/agent/training"
                     className={navigationMenuTriggerStyle()}
                   >
                     <Bot className="w-4 h-4 mr-2" /> Agent
@@ -108,9 +108,9 @@ export default function MainLayout() {
       </header>
 
       {/* Main Content Area */}
-      <main className="space-y-4 ">
+      <div className="space-y-4 ">
         <Outlet />
-      </main>
+      </div>
     </div>
   );
 }

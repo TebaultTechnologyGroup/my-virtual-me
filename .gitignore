@@ -1,0 +1,13 @@
+frontend/.env
+
+infra/.DS_Store
+infra/.aws-sam/*
+infra/cdk.out/*
+infra/lambda/package/*
+infra/layers/common_logic/*/
+!infra/layers/common_logic/python/supabase_client.py
+
+.env.json
+event.json
+
+.DS_Store

@@ -3,7 +3,7 @@ import LandingPage from "./../pages/LandingPage";
 import LoginPage from "./../pages/LoginPage";
 import RegisterPage from "./../pages/RegisterPage";
 import VerifyEmailPage from "./../pages/VerifyEmailPage";
-import DashboardPage from "./../pages/DashboardPage";
+import DashboardPage from "@/pages/app/dashboard/DashboardPage";
 import ProfilePage from "../pages/app/setup/SetupPage";
 import { RedirectIfAuthenticated } from "./../guards/RedirectIfAuthenticated";
 import { ProtectedRoutes } from "./../guards/ProtectedRoutes";
@@ -13,6 +13,7 @@ import SummaryPage from "@/pages/app/setup/steps/SummaryPage";
 import { CredentialsPage } from "@/pages/app/setup/steps/CredentialsPage";
 import JobHistoryPage from "@/pages/app/setup/steps/JobHistoryPage";
 import SkillsPage from "@/pages/app/setup/steps/SkillsPage";
+import TrainingStudio from "@/pages/app/agent/training/TrainingStudio";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
           { path: "/app/setup/job-history", Component: JobHistoryPage },
           { path: "/app/setup/credentials", Component: CredentialsPage },
           { path: "/app/setup/skills", Component: SkillsPage },
+          { path: "/app/agent/training", Component: TrainingStudio },
         ],
       },
     ],

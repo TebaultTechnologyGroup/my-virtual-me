@@ -71,8 +71,8 @@ export default function SetupPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your settings, update your profile, and configure your
-            Virtual Me to get the most out of our AI tools.
+            Complete each of the sections below to configure your Virtual Me
+            agent. The more accurate you are, the better the results.
           </p>
         </div>
       </header>
