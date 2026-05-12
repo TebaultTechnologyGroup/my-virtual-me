@@ -3,7 +3,9 @@ frontend/.env
 infra/.DS_Store
 infra/.aws-sam/*
 infra/cdk.out/*
-infra/lambda/package/*
+infra/node_modules/*
+infra/stacks/__pycache__/*
+infra/lambdas/node_modules/*
 infra/layers/common_logic/*/
 !infra/layers/common_logic/python/supabase_client.py
 
@@ -11,3 +13,9 @@ infra/layers/common_logic/*/
 event.json
 
 .DS_Store
+
+
+
+.gitignore
+
+
