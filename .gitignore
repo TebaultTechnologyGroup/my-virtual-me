@@ -9,6 +9,11 @@ infra/lambdas/node_modules/*
 infra/layers/common_logic/*/
 !infra/layers/common_logic/python/supabase_client.py
 
+
+infra/layers/*/python/
+!infra/layers/*/python/supabase_client.py
+
+
 .env.json
 event.json
 
