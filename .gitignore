@@ -24,3 +24,4 @@ event.json
 .gitignore
 
 
+infra/stacks/__pycache__/auth_stack.cpython-314.pyc
