@@ -1,4 +1,5 @@
 import { Link, useNavigate, Outlet } from "react-router-dom";
+import { signOut } from "@aws-amplify/auth";
 import { Settings, Bot, FileText, Briefcase, User, LogOut } from "lucide-react";
 import {
   NavigationMenu,
@@ -15,13 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { supabase } from "./../../../lib/supabase-client";
 
 export default function MainLayout() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    signOut();
     navigate("/login");
   };
 
