@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/lib/supabase-client";
+//import { supabase } from "@/lib/supabase-client";
 
 // Types for our "Extract & Confirm" workflow
 interface StarDraft {
@@ -32,7 +32,6 @@ interface StarDraft {
 }
 
 interface InterviewQuestion {
-  id: string;
   question: string;
   intent?: string;
   context_tag: string;
@@ -50,18 +49,21 @@ export default function TrainingStudio() {
   const startTraining = async () => {
     setIsGenerating(true);
     try {
-      // 1. Fetch "Super JSON" from your existing profile/job tables
-      // 2. Call your AWS Lambda via an Edge Function or API Gateway
-      // 3. Questions are saved to interview_qa via the Lambda
+      // REPLACE THIS WITH LAMBDA
+      const data = getSampleData();
+      let newQuestions: InterviewQuestion[] = [];
+      if (data.statusCode == 200) {
+        const questionArray = JSON.parse(data.body);
+        questionArray.forEach((q: InterviewQuestion, index: number) => {
+          newQuestions.push({
+            question: q.question,
+            intent: q.intent,
+            context_tag: q.context_tag,
+          });
+        });
+      }
 
-      // 4. Fetch the newly created questions
-      const { data, error } = await supabase
-        .from("interview_qa")
-        .select("id, question, context_tag")
-        .is("situation", null) // Only fetch unanswered ones
-        .order("created_at", { ascending: true });
-
-      if (data) setQuestions(data);
+      setQuestions(newQuestions);
     } catch (err) {
       toast.error("Failed to generate questions");
     } finally {
@@ -306,4 +308,17 @@ export default function TrainingStudio() {
       </div>
     </div>
   );
+
+  function getSampleData() {
+    return {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        "Access-Control-Allow-Methods": "POST,OPTIONS",
+      },
+      body: '[{"question": "Tell me about a time when you had to manage competing priorities or stakeholder expectations that were in direct conflict. How did you navigate that situation?", "intent": "Assess conflict resolution, stakeholder management, and decision-making under pressure\\u2014core competencies for any senior role.", "context_tag": "universal"}, {"question": "Describe your approach to building and maintaining trust with cross-functional teams, especially when you don\'t have direct authority over them.", "intent": "Evaluate leadership presence, influence, and collaborative capability without formal hierarchy\\u2014critical for senior transitions.", "context_tag": "leadership"}, {"question": "Walk me through a project where you had to deliver results with incomplete information or ambiguous requirements. How did you handle the uncertainty?", "intent": "Understand adaptability, problem-solving, and comfort with ambiguity\\u2014essential for senior-level decision-making.", "context_tag": "universal"}, {"question": "Your recent role at Tebault Technology Group involved AI-driven transformation and automation. Can you explain the end-to-end project lifecycle you managed\\u2014from discovery through deployment\\u2014and what metrics you used to measure success?", "intent": "Validate technical depth, project governance, and ability to quantify business impact; assess if AI/automation expertise translates to PM discipline.", "context_tag": "technical"}, {"question": "At Verizon, you held a Senior Manager title focused on Portfolio Success. What does \'portfolio success\' mean in that context, and how did you define and track KPIs across multiple initiatives?", "intent": "Clarify scope of previous role, portfolio-level thinking, and strategic alignment\\u2014critical for senior PM credibility.", "context_tag": "leadership"}, {"question": "Your accomplishments highlight rapid automation and cost avoidance (e.g., 100% cost avoidance on e-learning). Walk me through how you quantified ROI and communicated financial impact to executive stakeholders.", "intent": "Assess business acumen, financial literacy, and executive communication\\u2014gaps often seen in technical consultants transitioning to PM.", "context_tag": "technical"}, {"question": "Tell me about a project that failed or didn\'t meet expectations. What went wrong, and what would you do differently as a Project Manager?", "intent": "Evaluate self-awareness, accountability, and learning agility\\u2014often reveals gaps in planning, risk management, or scope control.", "context_tag": "universal"}, {"question": "Your background emphasizes technical delivery (GenAI, cloud automation, RAG systems). How comfortable are you managing projects where you\'re not the technical expert, and how would you ensure quality without deep domain knowledge?", "intent": "Identify potential blind spot: technical consultants often struggle delegating or trusting non-expert teams; critical gap for PM role.", "context_tag": "leadership"}, {"question": "Describe your experience with formal project management methodologies\\u2014Agile, Waterfall, Hybrid, or others. Which have you used, and how did you adapt them to your organizational context?", "intent": "Probe for structured PM discipline; your profile shows strong delivery but lacks explicit PM framework experience\\u2014a key gap for senior PM roles.", "context_tag": "technical"}, {"question": "As you transition from consulting and portfolio management into a Project Manager role, what aspects of project management do you feel least confident about, and how are you planning to address those gaps?", "intent": "Assess self-awareness, coachability, and realistic understanding of the PM discipline\\u2014reveals whether candidate is making an informed career move.", "context_tag": "universal"}]',
+    };
+  }
 }

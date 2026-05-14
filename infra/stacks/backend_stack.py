@@ -37,7 +37,8 @@ from constructs import Construct
 #     --type SecureString \
 #     --profile virtual-me
 # ------------------------------------------------------------------
-SSM_SUPABASE_KEY_PARAM = "/virtual-me/supabase/service-key"
+SSM_SUPABASE_KEY_PARAM = "/virtualme/supabase/service-key"  
+SSM_SUPABASE_URL_PARAM = "/virtualme/supabase/url"
 
 
 class BackendStack(Stack):
@@ -86,29 +87,9 @@ class BackendStack(Stack):
             memory_size=256,
             layers=[supabase_layer],
             environment={
-                # ── Plain config (not secret — safe to store here) ──────────
-                #
-                # The Supabase project URL is not a secret; it identifies
-                # which project to connect to but grants no access on its own.
-                "SUPABASE_URL": "https://kuynbrmpfncmpgtcvvrd.supabase.co",
-                #
-                # The Bedrock model ID is just a selector string.
-                "QUESTION_MODEL_ID": "anthropic.claude-haiku-4-5-20251001-v1:0",
-                #
-                # ── SSM pointer (not the secret itself) ─────────────────────
-                #
-                # We store only the SSM *parameter path* here, not the key
-                # value.  At runtime, supabase_client.py calls ssm.get_parameter
-                # with WithDecryption=True to fetch the actual SecureString.
-                #
-                # This means:
-                #   • The secret never appears in CloudFormation templates,
-                #     CDK assets, Lambda config pages, or CloudWatch logs.
-                #   • Rotating the key only requires updating the SSM value —
-                #     no CDK redeploy needed.
-                #   • IAM controls exactly which functions can read which params
-                #     (see _grant_ssm_read below).
+                "SUPABASE_URL_PARAM": SSM_SUPABASE_URL_PARAM,
                 "SUPABASE_SERVICE_KEY_PARAM": SSM_SUPABASE_KEY_PARAM,
+                "QUESTION_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0",                                     
             },
             code=_lambda.Code.from_asset(
                 path="lambdas/question_generator",
@@ -125,18 +106,23 @@ class BackendStack(Stack):
         # self.region / self.account are CDK tokens resolved at deploy time,
         # so this ARN is always correct regardless of which AWS account or
         # region you deploy to.
+        
         _grant_ssm_read(question_lambda, SSM_SUPABASE_KEY_PARAM, self.region, self.account)
+        _grant_ssm_read(question_lambda, SSM_SUPABASE_URL_PARAM, self.region, self.account)
 
         # ── Grant Bedrock access ─────────────────────────────────────────────
         # Scoped to only the Haiku model this function actually uses.
         # Swap the resource ARN for the Sonnet ARN on functions that need it.
+
         question_lambda.add_to_role_policy(
             iam.PolicyStatement(
                 sid="AllowBedrockHaiku",
                 actions=["bedrock:InvokeModel"],
                 resources=[
-                    f"arn:aws:bedrock:{self.region}::foundation-model/"
-                    "anthropic.claude-haiku-4-5-20251001-v1:0"
+                    # Wildcard region needed — cross-region inference profiles
+                    # route internally across us-east-1, us-east-2, us-west-2
+                    "arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+                    f"arn:aws:bedrock:*:{self.account}:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0",
                 ],
             )
         )
@@ -177,23 +163,16 @@ def _grant_ssm_read(
     param_path: str,
     region: str,
     account: str,
-) -> None:
-    """
-    Add an inline policy that allows ``fn`` to call ssm:GetParameter on
-    exactly one SecureString path — nothing more.
-
-    Usage (for each new Lambda that needs a secret):
-        _grant_ssm_read(my_lambda, "/virtual-me/some/secret", self.region, self.account)
-    """
+    ) -> None:
     fn.add_to_role_policy(
         iam.PolicyStatement(
             sid="AllowSSMRead" + param_path.replace("/", "").replace("-", ""),
-            actions=["ssm:GetParameter"],
-            # Parameter ARNs do not use a double-colon before the path.
-            # Format: arn:aws:ssm:<region>:<account>:parameter/<path-without-leading-slash>
+            actions=[
+                "ssm:GetParameter",    # single
+                "ssm:GetParameters",   # plural — used by get_parameters() batch call
+            ],
             resources=[
-                f"arn:aws:ssm:{region}:{account}:parameter"
-                f"{param_path}"   # param_path already has a leading /
+                f"arn:aws:ssm:{region}:{account}:parameter{param_path}"
             ],
         )
     )

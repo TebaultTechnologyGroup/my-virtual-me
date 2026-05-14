@@ -32,7 +32,7 @@ logger.setLevel(logging.INFO)
 
 BEDROCK_MODEL_ID = os.environ.get(
     "QUESTION_MODEL_ID",
-    "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "us.anthropic.claude-haiku-4-5-20251001-v1:0"
 )
 
 # Boto3 clients are safe to create globally; they use the Lambda execution role.
@@ -48,7 +48,7 @@ def get_profile(user_id: str) -> dict:
         supabase.table("profiles")
         .select("*")
         .eq("id", user_id)   # profiles.id == auth.users.id (see create-profiles.sql)
-        .single()
+        .maybe_single()
         .execute()
     )
     return result.data or {}
@@ -58,8 +58,7 @@ def get_job_history(user_id: str) -> list[dict]:
     result = (
         supabase.table("job_history")
         .select("*")
-        .eq("profile_id", user_id)
-        .order("start_date", desc=True)
+        .eq("user_id", user_id)
         .execute()
     )
     return result.data or []
@@ -67,14 +66,14 @@ def get_job_history(user_id: str) -> list[dict]:
 
 def get_skills(user_id: str) -> list[str]:
     result = (
-        supabase.table("skills")
-        .select("skill_name")
-        .eq("profile_id", user_id)
+        supabase.table("user_skills")
+        .select("skill")
+        .eq("user_id", user_id)
         .execute()
     )
     if not result.data:
         return []
-    return [row.get("skill_name") for row in result.data if row.get("skill_name")]
+    return [row.get("skill") for row in result.data if row.get("skill")]
 
 
 # ---------------------------------------------------------------------------
