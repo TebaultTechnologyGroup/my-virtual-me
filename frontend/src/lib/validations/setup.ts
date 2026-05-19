@@ -22,6 +22,15 @@ export const pillarSchema = z.object({
     })).max(9),
 });
 
+export const targetRoleSchema = z.object({
+    targetRoles: z.array(z.object({
+        id: z.uuid().optional(),
+        role_title: z.string().min(3, "Role Title required"),
+        prof_summary: z.string().min(50, "Professional summary should be substantial (min 20 chars)"),
+    })).max(9),
+});
+
+
 export const jobSchema = z.object({
     // Job History (Relational)
     jobs: z.array(z.object({
@@ -91,7 +100,7 @@ export const certificationSchema = z.object({
     })),
 });
 
-// // Interview Q&A (STAR Method)
+// Interview Q&A (STAR Method)
 // interviewQA: z.array(z.object({
 //     question: z.string().min(5, "Question text required"),
 //     situation: z.string().min(10, "Situation required"),
@@ -100,12 +109,17 @@ export const certificationSchema = z.object({
 //     result: z.string().min(10, "Result required"),
 // })),
 
+
+
+
+
 // // Final Human Element
 // hobbies: z.string().optional(),
 
 
 export type PersonalFormValues = z.infer<typeof personalSchema>;
 export type PillarFormValues = z.infer<typeof pillarSchema>;
+export type TargetRoleFormValues = z.infer<typeof targetRoleSchema>;
 export type JobFormValues = z.infer<typeof jobSchema>;
 export type SkillsFormValues = z.infer<typeof skillsSchema>;
 export type EducationFormValues = z.infer<typeof educationSchema>;

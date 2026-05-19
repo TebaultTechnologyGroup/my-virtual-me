@@ -227,12 +227,13 @@ def lambda_handler(event: dict, context) -> dict:
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": "*", 
             "Access-Control-Allow-Headers": "Content-Type,Authorization",
-            "Access-Control-Allow-Methods": "POST,OPTIONS",
+            "Access-Control-Allow-Methods": "POST,OPTIONS"
         },
         "body": json.dumps(questions),
     }
+
 
 
 # ---------------------------------------------------------------------------

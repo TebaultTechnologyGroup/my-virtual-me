@@ -17,13 +17,23 @@ CREATE TABLE IF NOT EXISTS profiles (
 );
 
 -- PROFESSIONAL SUMMARRIES
-CREATE TABLE IF NOT EXISTS professional_summaries (
+-- CREATE TABLE IF NOT EXISTS professional_summaries (
+-- id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+-- user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
+-- title TEXT NOT NULL,
+-- content TEXT,
+-- created_at TIMESTAMPTZ DEFAULT NOW()
+-- );
+
+-- TARGET ROLES 
+CREATE TABLE IF NOT EXISTS target_roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  content TEXT,
+  role_title TEXT NOT NULL,
+  prof_summary TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
 
 -- JOB HISTORY
 CREATE TABLE IF NOT EXISTS job_history (
@@ -115,7 +125,8 @@ CREATE TABLE IF NOT EXISTS training_sessions (
 ---
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE professional_summaries ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE professional_summaries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE target_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE job_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE job_details ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_skills ENABLE ROW LEVEL SECURITY;
@@ -135,8 +146,13 @@ ON profiles FOR ALL
 USING (auth.jwt() ->> 'sub' = id);
 
 -- Professional Summaries Policy
-CREATE POLICY "Users can only access their own summaries" 
-ON professional_summaries FOR ALL 
+-- CREATE POLICY "Users can only access their own summaries" 
+-- ON professional_summaries FOR ALL 
+-- USING (auth.jwt() ->> 'sub' = user_id);
+
+-- Target Roles Policy
+CREATE POLICY "Users can only access their own target roles" 
+ON target_roles FOR ALL 
 USING (auth.jwt() ->> 'sub' = user_id);
 
 -- Job History Policy

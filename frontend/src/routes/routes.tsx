@@ -9,11 +9,13 @@ import { RedirectIfAuthenticated } from "./../guards/RedirectIfAuthenticated";
 import { ProtectedRoutes } from "./../guards/ProtectedRoutes";
 import MainLayout from "@/pages/app/layouts/MainLayout";
 import PersonalPage from "@/pages/app/setup/steps/PersonalPage";
-import SummaryPage from "@/pages/app/setup/steps/SummaryPage";
 import { CredentialsPage } from "@/pages/app/setup/steps/CredentialsPage";
 import JobHistoryPage from "@/pages/app/setup/steps/JobHistoryPage";
 import SkillsPage from "@/pages/app/setup/steps/SkillsPage";
 import TrainingStudio from "@/pages/app/agent/training/TrainingStudio";
+import TargetRoles from "@/pages/app/setup/steps/TargetRolesPage";
+import TargetRolesPage from "@/pages/app/setup/steps/TargetRolesPage";
+import SummaryPage from "@/pages/app/setup/steps/SummaryPage";
 
 export const router = createBrowserRouter([
   {
@@ -34,7 +36,7 @@ export const router = createBrowserRouter([
           { path: "/app", Component: DashboardPage },
           { path: "/app/setup", Component: ProfilePage },
           { path: "/app/setup/personal", Component: PersonalPage },
-          { path: "/app/setup/summary", Component: SummaryPage },
+          { path: "/app/setup/target-roles", Component: TargetRolesPage },
           { path: "/app/setup/job-history", Component: JobHistoryPage },
           { path: "/app/setup/credentials", Component: CredentialsPage },
           { path: "/app/setup/skills", Component: SkillsPage },

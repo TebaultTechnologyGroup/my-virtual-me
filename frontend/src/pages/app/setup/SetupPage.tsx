@@ -26,11 +26,11 @@ const setupOptions = [
     bg: "bg-slate-50",
   },
   {
-    title: "Professional Summary",
+    title: "Target Roles",
     description:
-      "Manage your professional summary for one or more target job types. This will be used to create your signature professional stories and tailor your resume and interview prep.",
+      "Create one or more target roles you will apply to. This will be used to create your signature professional stories and tailor your resume and interview prep.",
     icon: BriefcaseBusiness,
-    path: "/app/setup/summary",
+    path: "/app/setup/target-roles",
     color: "text-blue-600",
     bg: "bg-blue-50",
   },

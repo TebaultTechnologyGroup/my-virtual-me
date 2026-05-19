@@ -135,16 +135,22 @@ class BackendStack(Stack):
             "VirtualMeApi",
             rest_api_name="virtual-me-api",
             handler=question_lambda,
-            proxy=False,
+            proxy=False,            
+        )
+
+        # Replace your questions_resource block with this:
+        questions_resource = api.root.add_resource(
+            "questions",
             default_cors_preflight_options=apigw.CorsOptions(
                 allow_origins=apigw.Cors.ALL_ORIGINS,
-                allow_methods=apigw.Cors.ALL_METHODS,
+                allow_methods=["POST", "OPTIONS"],
                 allow_headers=["Content-Type", "Authorization"],
             ),
         )
-
-        questions_resource = api.root.add_resource("questions")
-        questions_resource.add_method("POST")
+        questions_resource.add_method(
+            "POST",
+            apigw.LambdaIntegration(question_lambda),
+        )
 
         # ------------------------------------------------------------------
         # Public references (consumed by other stacks or tests)
