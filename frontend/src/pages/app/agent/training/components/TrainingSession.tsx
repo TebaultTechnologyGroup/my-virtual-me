@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@aws-amplify/auth";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ import { apiFetch } from "@/lib/api_client";
 import QuestionPanel from "./QuestionPanel";
 import ChatPanel from "./ChatPanel";
 import StarCard from "./StarCard";
-import type { Message, SessionConfig, StarDraft, ContextTag } from "../types";
+import type { Message, SessionConfig, StarDraft } from "../types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface TrainingSessionProps {
@@ -42,11 +42,18 @@ export default function TrainingSession({
   onRestart,
 }: TrainingSessionProps) {
   const navigate = useNavigate();
-  const { questions, mode, roleTitle, jobDescription } = config;
+  const {
+    questions,
+    mode,
+    jobDescription,
+    targetRole,
+    answeredIds,
+    firstUnansweredIndex,
+  } = config;
 
   // ── Per-question chat state ──────────────────────────────────────────────
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [currentIndex, setCurrentIndex] = useState(firstUnansweredIndex);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(answeredIds);
 
   // messages is a map from question id → Message[]
   // This preserves each question's conversation when the user navigates
@@ -177,20 +184,17 @@ export default function TrainingSession({
       try {
         const user = await getCurrentUser();
 
-        // Determine context_tag from the question metadata
-        const contextTag: ContextTag = currentQuestion.context_tag;
-
-        const { error } = await supabase.from("interview_qa").insert({
-          user_id: user.userId,
-          question: currentQuestion.question,
-          situation: edited.situation,
-          task: edited.task ?? null,
-          action: edited.action,
-          result: edited.result,
-          context_tag: contextTag,
-          mode,
-          ...(jobDescription && { job_description: jobDescription }),
-        });
+        const { error } = await supabase
+          .from("interview_qa")
+          .update({
+            situation: edited.situation,
+            task: edited.task ?? null,
+            action: edited.action ?? null,
+            result: edited.result ?? null,
+            is_answered: true,
+          })
+          .eq("user_id", user.userId)
+          .eq("id", currentQuestion.id);
 
         if (error) throw error;
 
@@ -292,7 +296,7 @@ export default function TrainingSession({
           <span className="text-muted-foreground">&rarr;</span>
           <span className="font-medium text-slate-700">Training Studio</span>
           <span className="text-muted-foreground">&rarr;</span>
-          <span className="text-slate-500 truncate max-w-48">{roleTitle}</span>
+          <span className="text-slate-500 truncate max-w-48">{targetRole}</span>
         </div>
 
         <div className="flex items-center gap-3">

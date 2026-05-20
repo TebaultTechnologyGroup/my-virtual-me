@@ -84,6 +84,7 @@ def build_user_payload(
     user_id: str,
     mode: str,
     target_jd: str | None,
+    role_id: str | None,
 ) -> dict:
     """Aggregate all profile data into a single dict for the LLM prompt."""
     return {
@@ -92,6 +93,7 @@ def build_user_payload(
         "skills": get_skills(user_id),
         "mode": mode,
         "target_job_description": target_jd,
+        "target_role_id": role_id,
     }
 
 
@@ -168,6 +170,7 @@ def lambda_handler(event: dict, context) -> dict:
         "user_id": "uuid-string",          # required
         "mode": "baseline" | "job_prep",   # optional, default "baseline"
         "target_job_description": "..."    # optional, used in job_prep mode
+        "target_role_id": "..."            # optional, target job role id 
     }
     """
     logger.info("Received event: %s", json.dumps(event))
@@ -184,6 +187,7 @@ def lambda_handler(event: dict, context) -> dict:
     user_id: str | None = body.get("user_id")
     mode: str = body.get("mode", "baseline")
     target_jd: str | None = body.get("target_job_description")
+    role_id: str | None = body.get("target_role_id")
 
     if not user_id:
         return _error(400, "user_id is required.")
@@ -193,7 +197,7 @@ def lambda_handler(event: dict, context) -> dict:
 
     # --- Fetch user data ---
     try:
-        user_payload = build_user_payload(user_id, mode, target_jd)
+        user_payload = build_user_payload(user_id, mode, target_jd, role_id)
     except Exception:
         logger.exception("Failed to fetch user data for user_id=%s", user_id)
         return _error(500, "Failed to retrieve user profile data.")

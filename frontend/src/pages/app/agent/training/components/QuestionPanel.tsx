@@ -1,5 +1,4 @@
 import { CheckCircle2, Circle, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import type { Question, ContextTag } from "../types";

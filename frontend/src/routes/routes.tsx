@@ -13,9 +13,7 @@ import { CredentialsPage } from "@/pages/app/setup/steps/CredentialsPage";
 import JobHistoryPage from "@/pages/app/setup/steps/JobHistoryPage";
 import SkillsPage from "@/pages/app/setup/steps/SkillsPage";
 import TrainingStudio from "@/pages/app/agent/training/TrainingStudio";
-import TargetRoles from "@/pages/app/setup/steps/TargetRolesPage";
 import TargetRolesPage from "@/pages/app/setup/steps/TargetRolesPage";
-import SummaryPage from "@/pages/app/setup/steps/SummaryPage";
 
 export const router = createBrowserRouter([
   {

@@ -127,6 +127,7 @@ class BackendStack(Stack):
             )
         )
 
+
         # ------------------------------------------------------------------
         # API Gateway
         # ------------------------------------------------------------------
@@ -138,7 +139,6 @@ class BackendStack(Stack):
             proxy=False,            
         )
 
-        # Replace your questions_resource block with this:
         questions_resource = api.root.add_resource(
             "questions",
             default_cors_preflight_options=apigw.CorsOptions(
@@ -158,6 +158,60 @@ class BackendStack(Stack):
         self.supabase_layer = supabase_layer
         self.question_lambda = question_lambda
         self.api = api
+
+         # ------------------------------------------------------------------
+        # answer_reviewer Lambda
+        # ------------------------------------------------------------------
+        answer_reviewer_lambda = _lambda.Function(
+            self,
+            "AnswerReviewerHandler",
+            function_name="virtual-me-answer-reviewer",
+            runtime=_lambda.Runtime.PYTHON_3_14,
+            handler="app.lambda_handler",
+            timeout=Duration.seconds(30), # LLM reasoning passes may take time
+            memory_size=256,
+            layers=[supabase_layer],
+            environment={
+                "SUPABASE_URL_PARAM": SSM_SUPABASE_URL_PARAM,
+                "SUPABASE_SERVICE_KEY_PARAM": SSM_SUPABASE_KEY_PARAM,
+                "REVIEW_MODEL_ID": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+            },
+            code=_lambda.Code.from_asset(
+                path="lambdas/answer_reviewer",
+            ),
+        )
+
+        # Grant SSM parameter tree permissions using your module helper
+        _grant_ssm_read(answer_reviewer_lambda, SSM_SUPABASE_KEY_PARAM, self.region, self.account)
+        _grant_ssm_read(answer_reviewer_lambda, SSM_SUPABASE_URL_PARAM, self.region, self.account)
+
+        # Grant target evaluation infrastructure access policies
+        answer_reviewer_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                sid="AllowBedrockHaikuForReview",
+                actions=["bedrock:InvokeModel"],
+                resources=[
+                    "arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0",
+                    f"arn:aws:bedrock:*:{self.account}:inference-profile/us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                ],
+            )
+        )
+
+        # ------------------------------------------------------------------
+        # API Gateway Route Addition
+        # ------------------------------------------------------------------
+        review_resource = api.root.add_resource(
+            "review_answer",
+            default_cors_preflight_options=apigw.CorsOptions(
+                allow_origins=apigw.Cors.ALL_ORIGINS,
+                allow_methods=["POST", "OPTIONS"],
+                allow_headers=["Content-Type", "Authorization"],
+            ),
+        )
+        review_resource.add_method(
+            "POST",
+            apigw.LambdaIntegration(answer_reviewer_lambda),
+        )
 
 
 # ----------------------------------------------------------------------

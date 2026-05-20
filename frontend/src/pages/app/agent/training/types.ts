@@ -12,10 +12,15 @@ export type TrainingMode = "baseline" | "job_prep";
 export type ContextTag = "universal" | "technical" | "leadership";
 
 export interface Question {
-    id: string;           // uuid – set client-side after generation
+    id: string;
     question: string;
-    intent?: string;
+    intent: string;
+    situation: string;
+    task: string;
+    action: string;
+    result: string;
     context_tag: ContextTag;
+    is_answered: boolean | false;
 }
 
 export interface Message {
@@ -34,15 +39,17 @@ export interface StarDraft {
 
 // Shape that TrainingInstructions calls onStartTraining with
 export interface StartTrainingParams {
-    roleId: string;
-    roleTitle: string;
-    jobDescription: string | null;
+    targetRoleId: string;
+    targetRole: string;
+    jobDescription: string;
 }
 
 // Shape passed down to TrainingSession
 export interface SessionConfig {
     questions: Question[];
     mode: TrainingMode;
-    roleTitle: string;
-    jobDescription: string | null;
+    jobDescription?: string;
+    targetRole?: string;
+    answeredIds: Set<string>,
+    firstUnansweredIndex: number
 }

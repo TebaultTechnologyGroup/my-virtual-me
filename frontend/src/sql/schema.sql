@@ -102,23 +102,29 @@ CREATE TABLE IF NOT EXISTS interview_qa (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
   question TEXT NOT NULL,
+  intent TEXT,
   situation TEXT,
   task TEXT,
   action TEXT,
   result TEXT,
   context_tag TEXT DEFAULT 'universal', -- 'universal', 'technical', 'leadership'
-  target_job_id UUID, -- Links to a specific Job Description prep session
+  is_answered boolean default false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+
 
 -- Training Sessions (for both baseline and job prep modes)
 CREATE TABLE IF NOT EXISTS training_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id TEXT REFERENCES profiles(id),
-  mode TEXT, -- 'baseline' or 'job_prep'
+  mode TEXT default 'baseline', -- 'baseline' or 'job_prep'
+  job_description TEXT,
+  target_role_id UUID,
   transcript JSONB, -- The full back-and-forth
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
 
 ---
 -- ENABLE ROW LEVEL SECURITY (RLS)

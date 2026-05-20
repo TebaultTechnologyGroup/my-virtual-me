@@ -47,6 +47,7 @@ export default function TrainingInstructions({
   const [roles, setRoles] = useState<TargetRole[]>([]);
   const [rolesLoading, setRolesLoading] = useState(true);
   const [selectedRoleId, setSelectedRoleId] = useState<string>("");
+  const [fetchRoleCalled, setFetchRoleCalled] = useState(false);
 
   // ── Job description ────────────────────────────────────────────────────
   const [jobDescription, setJobDescription] = useState<string>("");
@@ -63,6 +64,10 @@ export default function TrainingInstructions({
 
   // ── Fetch the user's target roles from Supabase ────────────────────────
   useEffect(() => {
+    if (fetchRoleCalled) return;
+    // prevent from loading twice
+    setFetchRoleCalled(true);
+
     let cancelled = false;
     const fetchRoles = async () => {
       try {
@@ -127,9 +132,9 @@ export default function TrainingInstructions({
     if (!canStart || !selectedRole) return;
     setIsSubmitting(true);
     onStartTraining({
-      roleId: selectedRoleId,
-      roleTitle: selectedRole.role_title,
-      jobDescription: jobDescription.trim() || null,
+      targetRoleId: selectedRoleId,
+      targetRole: selectedRole.role_title,
+      jobDescription: jobDescription.trim(),
     });
     // Note: setIsSubmitting(false) is not called here because TrainingStudio
     // will unmount this component and render GeneratingQuestions instead.
